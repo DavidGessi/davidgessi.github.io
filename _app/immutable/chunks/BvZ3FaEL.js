@@ -1,1 +1,0 @@
-import{U as e}from"./COt9spoJ.js";e();
