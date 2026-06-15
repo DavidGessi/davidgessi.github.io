@@ -1,6 +1,5 @@
 export async function load({ fetch, url }) {
     const searchQuery = url.searchParams.get('s') || '';
-    // Parameter jetzt 'category' nennen
     const filterCategory = url.searchParams.get('category') || 'all'; 
 
     let cocktails = [];
@@ -12,7 +11,6 @@ export async function load({ fetch, url }) {
             const data = await res.json();
             
             if (data.drinks) {
-                // HIER IST DIE ANPASSUNG: Wir prüfen jetzt drink.strCategory
                 if (filterCategory === 'all') {
                     cocktails = data.drinks;
                 } else {

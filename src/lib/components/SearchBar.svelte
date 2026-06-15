@@ -3,13 +3,11 @@
     
     let searchQuery = $state('');
     let filterCategory = $state('all'); 
-    let searchTimer; // Unser Timer für das Debouncing
+    let searchTimer;
 
     function triggerSearch() {
-        // 1. Alten Timer löschen, falls der User schnell weiter tippt
         clearTimeout(searchTimer);
         
-        // 2. Neuen Timer starten: Warte 500 Millisekunden nach dem letzten Tippen
         searchTimer = setTimeout(() => {
             if (searchQuery.trim()) {
                 // keepFocus: true ist extrem wichtig, damit das Textfeld beim Tippen nicht den Fokus verliert!
