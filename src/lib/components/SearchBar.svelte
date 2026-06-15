@@ -1,55 +1,50 @@
 <script>
     import { goto } from '$app/navigation';
-    import { base } from '$app/paths';
-
+    
     let searchQuery = $state('');
+    let filterCategory = $state('all'); 
+    let searchTimer; // Unser Timer für das Debouncing
 
-    function handleSearch(event) {
-        event.preventDefault();
+    function triggerSearch() {
+        // 1. Alten Timer löschen, falls der User schnell weiter tippt
+        clearTimeout(searchTimer);
         
-        if (searchQuery.trim() !== '') {
-            goto(`${base}/search?q=${encodeURIComponent(searchQuery.trim())}`);
-            searchQuery = ''; 
-        }
+        // 2. Neuen Timer starten: Warte 500 Millisekunden nach dem letzten Tippen
+        searchTimer = setTimeout(() => {
+            if (searchQuery.trim()) {
+                // keepFocus: true ist extrem wichtig, damit das Textfeld beim Tippen nicht den Fokus verliert!
+                goto(`/search?s=${encodeURIComponent(searchQuery)}&category=${encodeURIComponent(filterCategory)}`, { keepFocus: true });
+            }
+        }, 500);
     }
 </script>
 
-<form onsubmit={handleSearch} class="relative w-full max-w-sm">
+<div class="flex flex-col lg:flex-row items-center gap-2 w-full lg:w-auto mt-4 lg:mt-0">
+    
     <input 
         type="text" 
-        bind:value={searchQuery}
+        bind:value={searchQuery} 
+        oninput={triggerSearch}
         placeholder="Cocktail suchen..." 
-        class="w-full bg-neutral-900 text-white placeholder-neutral-500 pl-11 pr-4 py-2 rounded-2xl border border-neutral-800 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all duration-300 text-sm"
+        class="bg-neutral-900 border border-neutral-800 text-neutral-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-orange-500 transition-colors w-full lg:w-56"
     />
-    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-500">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-    </div>
-</form>
+    
+    <select 
+        bind:value={filterCategory} 
+        onchange={triggerSearch}
+        class="bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-orange-500 transition-colors cursor-pointer w-full lg:w-44"
+    >
+        <option value="all">Alle Kategorien</option>
+        <option value="Cocktail">Cocktail</option>
+        <option value="Ordinary Drink">Ordinary Drink</option>
+        <option value="Shot">Shot</option>
+        <option value="Punch / Party Drink">Punch / Party Drink</option>
+        <option value="Shake">Shake</option>
+        <option value="Beer">Beer</option>
+        <option value="Soft Drink">Soft Drink</option>
+    </select>
+</div>
 
 <!-- Ohne Css
-<script>
-    import { goto } from '$app/navigation';
-    import { base } from '$app/paths';
 
-    let searchQuery = $state('');
-
-    function handleSearch(event) {
-        event.preventDefault();
-        
-        if (searchQuery.trim() !== '') {
-            goto(`${base}/search?q=${encodeURIComponent(searchQuery.trim())}`);
-            searchQuery = ''; 
-        }
-    }
-</script>
-
-<form onsubmit={handleSearch}>
-    <input 
-        type="text" 
-        bind:value={searchQuery}
-        placeholder="Cocktail suchen..." 
-    />
-    <button type="submit">Suchen</button>
-</form> -->
+-->
